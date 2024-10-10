@@ -1,102 +1,60 @@
+For a **Triple Triad** prototype in PICO-8, using separate `.lua` files can be beneficial if you want to keep your code modular and maintainable, especially if the project grows beyond a basic prototype. However, it's also important to consider PICO-8's constraints and the scope of your project.
 
----
+### When to Use Separate `.lua` Files for a Triple Triad Prototype
 
-# CardFront-Prototype
+Here are some factors that would make it advantageous to use separate `.lua` files:
 
-CardFront-Prototype is a **Triple Triad**-inspired card game prototype built using **PICO-8**. The game aims to capture the core mechanics of Triple Triad while leveraging the simplicity and charm of the PICO-8 platform. The prototype is implemented in **Lua** and designed to work within PICO-8's constraints, including a 128x128 resolution and 16-color palette.
+1. **Code Organization and Readability**:
+   - **Grid Logic**: Managing the 3x3 grid, placing cards, and checking for valid moves.
+   - **Card Mechanics**: Handling card attributes (e.g., power values, ownership) and card interactions (e.g., flipping).
+   - **Game Flow**: Managing the game state, turn logic, and win conditions.
+   - **Rendering**: Drawing the grid, cards, and other UI elements.
+   
+   By separating these into distinct files, you can more easily find and work on specific parts of the game without scrolling through a long file. This approach is especially helpful if you plan to expand the game or add more features.
 
-## Table of Contents
-1. [Game Overview](#game-overview)
-2. [Features](#features)
-3. [Setup and Installation](#setup-and-installation)
-4. [Gameplay](#gameplay)
-    - [Game Mechanics](#game-mechanics)
-    - [Controls](#controls)
-5. [Development](#development)
-    - [Code Structure](#code-structure)
-    - [How to Contribute](#how-to-contribute)
-6. [Future Enhancements](#future-enhancements)
-7. [License](#license)
+2. **Reusability and Modular Development**:
+   - If you decide to reuse some of the code for another game or project in PICO-8, having separate modules for grid management, card logic, etc., makes it easier to extract and reuse that code.
+   - You can build independent features or mechanics (like the card flipping algorithm) in separate files and then include them when needed.
 
-## Game Overview
+3. **Scalability**:
+   - As the game expands to include more features (e.g., AI opponent, advanced rules like "Same" or "Plus"), having modular code helps keep the project manageable. This is particularly useful if you plan to build the game incrementally, adding new rules or mechanics over time.
 
-The game is a turn-based card game set on a 3x3 grid. Each card has four sides with numbered values, representing the card's power on each side. Players take turns placing cards on the grid, attempting to flip the opponent's cards by having higher values on adjacent sides.
+### When to Keep Everything in `main.lua`
 
-## Features
+For a small prototype or proof-of-concept, keeping everything in a single file (`main.lua`) may still be a good idea, especially if:
 
-- **3x3 Grid Gameplay**: Play on a grid with nine slots, filling the board with cards to determine the winner.
-- **Card Flipping Mechanic**: Cards flip ownership based on the comparison of adjacent values.
-- **Turn-based Play**: Alternate turns between two players.
-- **Simple AI for Opponent** (planned): A basic AI to simulate playing against the computer.
-- **Pixel Art Visuals**: Retro visuals created using PICO-8's 16-color palette.
+1. **The Project Scope Is Small**:
+   - If you only want to implement basic Triple Triad rules (placing cards, flipping adjacent cards) and don't plan on adding more complex features soon, keeping the code in one file can keep things simple.
+   
+2. **You Want Quick Iteration**:
+   - For rapid prototyping and testing, having all the code in one file makes it easy to make changes without managing multiple files.
 
-## Setup and Installation
+3. **PICO-8's Token Limit**:
+   - PICO-8 has a token limit (8192 tokens), and splitting files does not change the total token count. If your project starts reaching the token limit, you may have to refactor and optimize the code regardless of file structure.
 
-To play or develop CardFront-Prototype, you'll need **PICO-8**. Follow these steps:
+### Suggested Approach
 
-1. **Download and Install PICO-8**: You can purchase and download PICO-8 from [https://www.lexaloffle.com/pico-8.php](https://www.lexaloffle.com/pico-8.php).
-2. **Clone the Repository**:
-   ```bash
-   git clone https://github.com/your-username/CardFront-Prototype.git
-   ```
-3. **Run the Game**:
-   - Open PICO-8 and load the `.p8` file from the cloned repository.
-   - Use the command `load CardFront-Prototype.p8` in PICO-8, then run the game with the `run` command.
+1. **Start Simple, Then Refactor**:
+   - Begin with everything in `main.lua`. As you add more features and the codebase grows, identify parts that can be separated into distinct modules (e.g., `grid.lua`, `card.lua`, `game.lua`).
+   - Use clear comments and sections in your `main.lua` to organize the code initially.
 
-## Gameplay
+2. **Suggested File Structure for a Modular Approach**:
+   - `main.lua`: Handles the main game loop, initializing modules, and core game functions.
+   - `grid.lua`: Manages the 3x3 grid and card placement logic.
+   - `card.lua`: Contains functions for creating, managing, and flipping cards.
+   - `game.lua`: Implements game flow, such as turn management and win conditions.
+   - `draw.lua`: Handles rendering the grid, cards, and any additional UI elements.
 
-### Game Mechanics
+3. **Use `#include` to Combine the Files**:
+   - PICO-8 supports the `#include` directive for loading multiple files, allowing you to maintain modularity while still working within PICO-8's environment:
+     ```lua
+     -- In main.lua
+     #include grid.lua
+     #include card.lua
+     #include game.lua
+     #include draw.lua
+     ```
 
-- **Grid**: The game is played on a 3x3 grid where each cell can hold one card.
-- **Card Attributes**:
-  - Each card has four numbers representing its power on the top, right, bottom, and left sides.
-  - Cards belong to either the player or the opponent.
-- **Card Placement**:
-  - Players take turns placing a card on an empty grid cell.
-  - If the placed card has a higher number than an adjacent card, the adjacent card flips ownership.
+### Conclusion
 
-### Controls
-
-- **Arrow Keys**: Move the cursor to select a grid cell.
-- **Z/X or Confirm Button**: Place a card in the selected grid cell.
-
-## Development
-
-### Code Structure
-
-The codebase is structured as follows:
-
-- **grid.lua**: Manages the 3x3 grid representation and card placement logic.
-- **card.lua**: Contains functions for creating and managing card attributes.
-- **game.lua**: Implements the main game loop, turn management, and card flipping mechanics.
-- **draw.lua**: Handles rendering the grid, cards, and other visual elements on the screen.
-
-### How to Contribute
-
-Contributions are welcome! To get started:
-
-1. **Fork the Repository**.
-2. **Create a Branch** for your feature (`git checkout -b feature-name`).
-3. **Commit Your Changes** (`git commit -am 'Add new feature'`).
-4. **Push to the Branch** (`git push origin feature-name`).
-5. **Open a Pull Request**.
-
-Please ensure your code follows the existing style and include comments where necessary.
-
-## Future Enhancements
-
-Planned features include:
-
-- **AI Opponent**: Add a simple AI to play against the player.
-- **Card Selection System**: Allow players to choose from a hand of cards before each turn.
-- **Win Conditions**: Implement game-ending scenarios and determine the winner based on card control.
-- **Advanced Rules**: Add optional rules such as "Same," "Plus," or other variations to increase game depth.
-- **Enhanced Graphics and Sound**: Improve the visuals and add sound effects for better feedback.
-
-## License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more information.
-
----
-
-Feel free to modify this README as your project evolves.
+For a Triple Triad prototype, starting with a single file and then refactoring into separate files as the project evolves can be a practical approach. This allows you to manage complexity better while still prototyping quickly. If you know you'll be expanding the game's features significantly, adopting a modular structure with separate `.lua` files from the beginning will help maintain code quality and organization.
